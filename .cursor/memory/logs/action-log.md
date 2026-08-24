@@ -18,6 +18,7 @@
 - Links (опционально)
 
 ## Latest Entries
+- `2026-08-24T160300Z-colon-shortcode-markup-code.md`
 - `2026-08-24T154500Z-colon-shortcode-markup-code.md`
 - `2026-08-15T010600Z-profile-rating-contrast-stats-closeout.md`
 - `2026-08-15T010500Z-film-catalog-metadata-ui-closeout.md`
@@ -42,4 +43,3 @@
 - `2026-08-04T123000Z-frontend-refactor-ux-polish-closeout.md`
 - `2026-08-04T170000Z-feed-post-delete-menu-closeout.md`
 - `2026-08-04T160000Z-tmdb-film-integration-closeout.md`
-- `2026-08-04T153000Z-profile-stats-director-franchise-closeout.md`

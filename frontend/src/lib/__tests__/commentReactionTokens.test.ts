@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 
 import {
+  expandLegacyReactionTokens,
   reactionTokenForInsert,
   reactionTokenFromId,
   reactionTokenFromShortcode,
@@ -59,5 +60,30 @@ describe('splitCommentTextIntoSegments', () => {
     expect(splitCommentTextIntoSegments('wow :gasp: nice')).toEqual([
       { type: 'text', value: 'wow :gasp: nice' },
     ])
+  })
+})
+
+describe('expandLegacyReactionTokens', () => {
+  const idToShortcode = new Map<number, string>([
+    [12, 'gasp'],
+    [3, 'heart'],
+  ])
+
+  it('replaces unicode ⟦r{id}⟧ with :shortcode: when the id is known', () => {
+    expect(expandLegacyReactionTokens('вау ⟦r12⟧ класс', idToShortcode)).toBe('вау :gasp: класс')
+  })
+
+  it('replaces ascii [[r{id}]] with :shortcode: when the id is known', () => {
+    expect(expandLegacyReactionTokens('wow [[r12]] nice', idToShortcode)).toBe('wow :gasp: nice')
+  })
+
+  it('leaves unknown ids unchanged', () => {
+    expect(expandLegacyReactionTokens('keep ⟦r99⟧ and [[r7]]', idToShortcode)).toBe(
+      'keep ⟦r99⟧ and [[r7]]',
+    )
+  })
+
+  it('expands mixed known tokens in one pass', () => {
+    expect(expandLegacyReactionTokens('⟦r12⟧ then [[r3]]', idToShortcode)).toBe(':gasp: then :heart:')
   })
 })

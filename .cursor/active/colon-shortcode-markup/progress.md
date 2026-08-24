@@ -24,4 +24,14 @@
 - Insert helpers (comment draft, watch note, feed compose, feed cards) call `reactionTokenForInsert(id, shortcode)`.
 - Parents: `CommentComposeBar`, `CommentThreadSection`, `EngagementCommentsRow`, `MovieCardDetailPage`.
 
-Implementation remaining: colon autocomplete, closeout docs/PR.
+## 2026-08-24 — comment compose `:shortcode:` autocomplete + edit expand
+
+- Added `parseActiveShortcodeQuery` (Discord-like `:` query; rejects `10:30`, `hello:`, closing `:gasp:`).
+- `expandLegacyReactionTokens` rewrites `⟦r{id}⟧` / `[[r{id}]]` to `:shortcode:` when the id is in the catalog map.
+- `useReactionShortcodePicker` + `ReactionShortcodeSuggestPortal` (Arrow/Enter, cap 24, prefix then substring).
+- Wired through `useCommentDraftEditor`, `CommentComposeBar` (single-line and multiline), `CommentThreadSection`, movie-card and feed-post detail pages.
+- Entering comment edit loads the catalog and expands legacy tokens in `CommentListItem`; catalog failure leaves legacy markers.
+
+Verification: `cd frontend && npm test` (156 passed, including parse + expand); `npm run lint` (no new issues); `npx tsc -b` passed. `vite build` failed in this environment (`registerHooks` / Cloudflare plugin), not due to these files.
+
+Implementation remaining: feed compose / watch notes autocomplete (next task), closeout docs/PR.

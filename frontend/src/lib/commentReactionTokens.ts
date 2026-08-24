@@ -230,6 +230,27 @@ export function splitCommentTextIntoSegmentsWithRanges(
   return splitCommentTextIntoSegmentsWithRangesImpl(text, shortcodeToId)
 }
 
+const UNICODE_EXPAND_RE = /⟦r(\d+)⟧/g
+const ASCII_EXPAND_RE = /\[\[r(\d+)\]\]/g
+
+/** Replace legacy `⟦r{id}⟧` / `[[r{id}]]` with `:shortcode:` when the id is in the map. */
+export function expandLegacyReactionTokens(
+  text: string,
+  idToShortcode: ReadonlyMap<number, string>,
+): string {
+  const replaceKnown = (full: string, idRaw: string): string => {
+    const id = Number(idRaw)
+    const shortcode = idToShortcode.get(id)
+    if (shortcode == null || shortcode === '') {
+      return full
+    }
+    return `:${shortcode}:`
+  }
+  UNICODE_EXPAND_RE.lastIndex = 0
+  ASCII_EXPAND_RE.lastIndex = 0
+  return text.replace(UNICODE_EXPAND_RE, replaceKnown).replace(ASCII_EXPAND_RE, replaceKnown)
+}
+
 export function insertSnippetAtCaret(
   value: string,
   selectionStart: number | null,
