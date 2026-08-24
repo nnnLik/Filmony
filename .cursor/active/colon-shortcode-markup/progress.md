@@ -1,6 +1,13 @@
 # Progress: colon-shortcode-markup
 
-**Status:** `in_progress`
+**Status:** `in_progress` (implementation **code complete**; tests + PR remaining)
+
+## 2026-08-24T163000Z — closeout docs (code complete)
+
+- Wrote `docs/features/colon-shortcode-markup.md` (syntax, spoilers, edit vs published, legacy tokens, catalog `shortcode`, canonicalize on write, surfaces, autocomplete, out of scope).
+- Wrote `.cursor/active/colon-shortcode-markup/result.md` (implemented, files grouped by area, verification, limitations).
+- Action-log fragment: `.cursor/memory/logs/2026-08-24T163000Z-colon-shortcode-markup-docs.md`.
+- Code is done. Next: Docker `make backend-test`, CI Frontend `npm run build`, PR to `master`. Deploy stays `workflow_dispatch`.
 
 ## 2026-08-24 — catalog shortcode + write canonicalize
 
@@ -43,4 +50,4 @@ Verification: `cd frontend && npm test` (156 passed, including parse + expand); 
 
 Verification: `npx eslint --max-warnings=0` on touched files passed; `npx tsc -b` passed.
 
-Implementation remaining: closeout docs/PR.
+Implementation remaining at that point: closeout docs/PR. Docs landed 2026-08-24T163000Z; tests + PR still open.
