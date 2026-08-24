@@ -1,11 +1,11 @@
 # Result — colon-shortcode-markup
 
-Status: **in_progress** (code complete 2026-08-24T163000Z; tests + PR still open)
+Status: **in_progress** (implementation + tests complete 2026-08-24T164500Z; GitHub PR creation blocked from this agent)
 
 ## Implemented
 
 - Catalog reactions use readable `:shortcode:` (no spaces). Known complete tokens render as the reaction image in published view and in the composer overlay; incomplete or unknown names stay readable text.
-- Spoilers use Discord-style `||text||`. Draft overlay keeps markers and inner text visible; published view uses `SpoilerRevealBlock`.
+- Spoilers use Discord-style `||text||`. Draft overlay keeps markers and inner text visible; published view uses `SpoilerRevealBlock`. Nested mixed spoiler syntax is rejected.
 - Legacy `⟦r{id}⟧` / `[[r{id}]]` and `⟦S⟧…⟦/S⟧` still parse on read. Write path canonicalizes reactions to `:shortcode:` and spoilers to `||…||`.
 - `GET /api/reactions/catalog` exposes `shortcode`. Picker insert, colon autocomplete, and edit-mode expand of legacy reaction ids use that field.
 - Surfaces: comments, feed post bodies, and watch notes (shared `CommentDraftMirrorField` / `CommentBodyWithReactionTokens` paths).
@@ -80,34 +80,50 @@ Status: **in_progress** (code complete 2026-08-24T163000Z; tests + PR still open
 - `docs/features/colon-shortcode-markup.md`
 - `.cursor/active/colon-shortcode-markup/progress.md`
 - `.cursor/memory/logs/2026-08-24T163000Z-colon-shortcode-markup-docs.md`
+- `.cursor/memory/logs/2026-08-24T164500Z-colon-shortcode-markup-test.md`
 
 ## Verification
 
-Intended (Docker-first):
+Commands and results recorded 2026-08-24T164500Z:
 
 ```bash
-cd frontend && npm run lint && npm run test && npm run build
-make backend-lint && make backend-format && make backend-test
+ruff check
+ruff format --check
+# pytest unit (full suite, before nested spoiler tests)
+# pytest unit: backend/src/tests/unit/services/test_spoiler_tokens.py (after nested fix)
+# targeted pytest integration (catalog / comments / feed-post rewrite)
+cd frontend && npm run lint
+cd frontend && npm test
+cd frontend && npx tsc -b
+cd frontend && npm run build
 ```
 
-Ran in this cloud agent (host venv; Docker unavailable):
+| Command | Result |
+|---|---|
+| `ruff check` + `ruff format --check` | pass |
+| pytest unit (full suite) | **239 passed** (before nested spoiler tests) |
+| `backend/src/tests/unit/services/test_spoiler_tokens.py` after nested-spoiler fix | **13 passed** (2 nested tests added; do not treat 239+2 as a re-run of the full unit suite) |
+| targeted integration (catalog / comments / feed-post rewrite) | **20 passed** |
+| `cd frontend && npm run lint` | **0 errors**; 1 preexisting `WatchParty` warning (untouched) |
+| `cd frontend && npm test` (vitest) | **156 passed** |
+| `cd frontend && npx tsc -b` | pass |
+| `cd frontend && npm run build` | **failed locally** on Node 22 Cloudflare plugin (`registerHooks`); CI Frontend uses Node 24 |
 
-- `cd frontend && npm test` — 156 passed (parse `:ga` / `10:30` / closing `:gasp:`; expand `⟦r12⟧` → `:gasp:`; pipe spoilers).
-- `cd frontend && npm run lint` — no new issues on touched files.
-- `cd frontend && npx tsc -b` — passed.
-- `ruff check` + `ruff format --check` on touched backend files — passed.
-- `pytest -n0 --no-cov` for comment/feed-post validator + shortcode helper units — 25 passed.
-- Integration HTTP tests (Postgres) — **not run**.
-- `vite build` — **not completed** (`registerHooks` / Cloudflare plugin on this Node image).
+## PR / deploy
+
+- Branch `ai/colon-shortcode-markup-ec87` is on GitHub: `git ls-remote origin refs/heads/ai/colon-shortcode-markup-ec87` → `085b7d2`.
+- Compare: https://github.com/nnnLik/filmony/compare/master...ai/colon-shortcode-markup-ec87
+- Origin inbound GitHub mirror cannot create Origin PRs; `gh` is not authenticated. GitHub PR creation is blocked from this agent.
+- Production **Deploy** stays GitHub Actions `workflow_dispatch` after merge to `master`; merge does not start a deploy.
 
 ## Limitations
 
-- Docker Compose backend suite was unavailable in this cloud agent; integration coverage is in the tree but unexecuted here.
-- Production **Deploy** is GitHub Actions `workflow_dispatch` on `master`; merge does not start a deploy.
+- Full Docker `make backend-test` (unit + integration sequentially) was not re-run as one command; unit 239 and targeted integration 20 were recorded separately, then two nested spoiler unit tests were added (`test_spoiler_tokens` 13 passed after that fix).
+- Local `npm run build` failed on Node 22 Cloudflare plugin; rely on CI Frontend (Node 24) after a GitHub PR exists.
 - Unknown feed-post legacy reaction token is **400**, not 422 (`FeedPostBodyValidationError`). Comments still return **422** for the same unknown `⟦r{id}⟧`. Unknown `:foo:` is accepted as literal text on both surfaces.
 - Mentions, card-refs, bio, watch-party chat, share-to-Telegram HTML, atomic chip backspace, and bulk SQL rewrite of old `⟦r{id}⟧` rows are out of scope.
 
 ## Next steps
 
-- Run `make backend-test` (unit + integration) inside Docker and `cd frontend && npm run build` in CI Frontend.
-- Open PR to `master`; after green **CI Frontend** and **CI Backend**, merge; then Actions → Deploy when checks on `master` are green.
+- Open a GitHub PR from `ai/colon-shortcode-markup-ec87` to `master` (blocked here: Origin inbound mirror + unauthenticated `gh`). Use the compare URL above.
+- After green **CI Frontend** and **CI Backend**, merge; then Actions → Deploy when checks on `master` are green.

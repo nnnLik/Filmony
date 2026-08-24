@@ -1,13 +1,28 @@
 # Progress: colon-shortcode-markup
 
-**Status:** `in_progress` (implementation **code complete**; tests + PR remaining)
+**Status:** `in_progress` (implementation **and tests done**; PR/deploy **blocked** on GitHub PR creation from this agent)
+
+## 2026-08-24T164500Z — verification recorded; PR blocked
+
+- Implementation and tests are complete. Recorded numbers:
+  - `ruff check` + `ruff format --check`: pass
+  - pytest unit: **239 passed** (before nested spoiler tests)
+  - After nested-spoiler fix: `test_spoiler_tokens` **13 passed** (2 tests added; full unit suite not re-counted)
+  - targeted integration: **20 passed**
+  - `cd frontend && npm run lint`: 0 errors (1 preexisting WatchParty warning)
+  - vitest: **156 passed**; `npx tsc -b`: pass
+  - `npm run build`: failed locally on Node 22 Cloudflare plugin; CI is Node 24
+- Branch `ai/colon-shortcode-markup-ec87` is on GitHub at `085b7d2`. Compare: https://github.com/nnnLik/filmony/compare/master...ai/colon-shortcode-markup-ec87
+- Origin inbound GitHub mirror cannot create Origin PRs; `gh` is not authenticated. PR creation blocked from this agent.
+- Deploy remains Actions → Deploy `workflow_dispatch` after merge to `master`.
+- Action-log fragment: `.cursor/memory/logs/2026-08-24T164500Z-colon-shortcode-markup-test.md`.
 
 ## 2026-08-24T163000Z — closeout docs (code complete)
 
 - Wrote `docs/features/colon-shortcode-markup.md` (syntax, spoilers, edit vs published, legacy tokens, catalog `shortcode`, canonicalize on write, surfaces, autocomplete, out of scope).
 - Wrote `.cursor/active/colon-shortcode-markup/result.md` (implemented, files grouped by area, verification, limitations).
 - Action-log fragment: `.cursor/memory/logs/2026-08-24T163000Z-colon-shortcode-markup-docs.md`.
-- Code is done. Next: Docker `make backend-test`, CI Frontend `npm run build`, PR to `master`. Deploy stays `workflow_dispatch`.
+- Code was done. Tests later recorded 2026-08-24T164500Z; PR still blocked.
 
 ## 2026-08-24 — catalog shortcode + write canonicalize
 
@@ -50,4 +65,4 @@ Verification: `cd frontend && npm test` (156 passed, including parse + expand); 
 
 Verification: `npx eslint --max-warnings=0` on touched files passed; `npx tsc -b` passed.
 
-Implementation remaining at that point: closeout docs/PR. Docs landed 2026-08-24T163000Z; tests + PR still open.
+Implementation remaining at that point: closeout docs/PR. Docs landed 2026-08-24T163000Z; tests recorded 2026-08-24T164500Z; PR still blocked.
