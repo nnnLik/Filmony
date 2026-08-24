@@ -944,6 +944,20 @@ async def test_feed_post_body_canonicalizes_legacy_reaction_tokens(
     assert ok.status_code == 200
     assert ok.json()['body'] == 'вау :gasp: класс'
 
+    pipe_combo = await async_client.post(
+        '/api/feed-posts',
+        json={'body': '||секрет|| вау :gasp: класс'},
+    )
+    assert pipe_combo.status_code == 200
+    assert pipe_combo.json()['body'] == '||секрет|| вау :gasp: класс'
+
+    legacy_combo = await async_client.post(
+        '/api/feed-posts',
+        json={'body': f'⟦S⟧секрет⟦/S⟧ вау ⟦r{rid}⟧ класс'},
+    )
+    assert legacy_combo.status_code == 200
+    assert legacy_combo.json()['body'] == '||секрет|| вау :gasp: класс'
+
     unknown_shortcode = await async_client.post(
         '/api/feed-posts',
         json={'body': 'hello :foo: there'},

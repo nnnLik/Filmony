@@ -641,9 +641,68 @@ async def test_create_card_watch_note_accepts_spoiler_tokens(async_client: Async
     )
     assert created.status_code == 200
     card_id = created.json()['id']
+    stored = '||финал с твистом||'
+    assert created.json()['watch_note'] == stored
+    fetched = await async_client.get(f'/api/cards/{card_id}')
+    assert fetched.status_code == 200
+    assert fetched.json()['watch_note'] == stored
+
+
+@pytest.mark.asyncio
+async def test_create_card_watch_note_accepts_pipe_spoilers(async_client: AsyncClient) -> None:
+    await _login(async_client, telegram_user_id=6294)
+    film = await _create_film(kinopoisk_id=1006294)
+    note = '||другой финал||'
+    created = await async_client.post(
+        '/api/cards',
+        json={
+            'film_id': film.id,
+            'kinopoisk_id': film.kinopoisk_id,
+            'genres': [],
+            'rating': 8.0,
+            'company': 'alone',
+            'mood_before': 'relax',
+            'mood_after': 'enjoyed',
+            'custom_tags': [],
+            'watch_note': note,
+        },
+    )
+    assert created.status_code == 200
+    card_id = created.json()['id']
+    assert created.json()['watch_note'] == note
     fetched = await async_client.get(f'/api/cards/{card_id}')
     assert fetched.status_code == 200
     assert fetched.json()['watch_note'] == note
+
+
+@pytest.mark.asyncio
+async def test_create_card_watch_note_canonicalizes_legacy_reaction_tokens(
+    async_client: AsyncClient,
+) -> None:
+    await _login(async_client, telegram_user_id=6295)
+    film = await _create_film(kinopoisk_id=1006295)
+    rx = await _insert_reaction_type(asset_key='watch-note-embed-6295')
+    created = await async_client.post(
+        '/api/cards',
+        json={
+            'film_id': film.id,
+            'kinopoisk_id': film.kinopoisk_id,
+            'genres': [],
+            'rating': 8.0,
+            'company': 'alone',
+            'mood_before': 'relax',
+            'mood_after': 'enjoyed',
+            'custom_tags': [],
+            'watch_note': f'вау ⟦r{rx}⟧',
+        },
+    )
+    assert created.status_code == 200
+    card_id = created.json()['id']
+    stored = 'вау :watch-note-embed-6295:'
+    assert created.json()['watch_note'] == stored
+    fetched = await async_client.get(f'/api/cards/{card_id}')
+    assert fetched.status_code == 200
+    assert fetched.json()['watch_note'] == stored
 
 
 @pytest.mark.asyncio
@@ -1520,7 +1579,7 @@ async def test_create_and_list_comments_flat(async_client: AsyncClient) -> None:
         json={'text': '⟦S⟧неожиданный финал⟦/S⟧'},
     )
     assert spoiler.status_code == 200
-    assert spoiler.json()['text'] == '⟦S⟧неожиданный финал⟦/S⟧'
+    assert spoiler.json()['text'] == '||неожиданный финал||'
 
     reply = await async_client.post(
         f'/api/cards/{card_id}/comments',
@@ -1758,6 +1817,40 @@ async def test_comment_reaction_embedded_tokens(async_client: AsyncClient) -> No
         ':comment-embed-707-a::comment-embed-707-b:'
         ':comment-embed-707-c::comment-embed-707-d: много'
     )
+
+
+@pytest.mark.asyncio
+async def test_comment_pipe_spoiler_and_shortcode_roundtrip(async_client: AsyncClient) -> None:
+    await _login(async_client, telegram_user_id=7090)
+    film = await _create_film(kinopoisk_id=1007090, title='Спойлер', year=2021)
+    created = await async_client.post(
+        '/api/cards',
+        json={
+            'film_id': film.id,
+            'kinopoisk_id': film.kinopoisk_id,
+            'genres': ['драма'],
+            'rating': 7.0,
+            'company': 'alone',
+            'mood_before': 'relax',
+            'mood_after': 'enjoyed',
+            'custom_tags': [],
+        },
+    )
+    assert created.status_code == 200
+    card_id = created.json()['id']
+    asset_key = 'comment-combo-7090'
+    await _insert_reaction_type(asset_key=asset_key)
+    text = f'||финал|| :{asset_key}:'
+    ok = await async_client.post(
+        f'/api/cards/{card_id}/comments',
+        json={'text': text},
+    )
+    assert ok.status_code == 200
+    assert ok.json()['text'] == text
+    listed = await async_client.get(f'/api/cards/{card_id}/comments')
+    assert listed.status_code == 200
+    hit = next(item for item in listed.json()['items'] if item['id'] == ok.json()['id'])
+    assert hit['text'] == text
 
 
 @pytest.mark.asyncio
