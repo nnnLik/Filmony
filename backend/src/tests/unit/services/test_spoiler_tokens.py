@@ -53,7 +53,19 @@ def test_validate_spoiler_tokens_rejects_unmatched_close() -> None:
 
 def test_validate_spoiler_tokens_rejects_nested_blocks() -> None:
     nested = f'{SPOILER_OPEN}outer {SPOILER_OPEN}inner{SPOILER_CLOSE}{SPOILER_CLOSE}'
-    with pytest.raises(SpoilerTokenValidationError, match='nested'):
+    with pytest.raises(SpoilerTokenValidationError, match='nested spoiler blocks are not allowed'):
+        validate_spoiler_tokens(nested)
+
+
+def test_validate_spoiler_tokens_rejects_pipe_nested_in_legacy() -> None:
+    nested = f'{SPOILER_OPEN}outer ||inner||{SPOILER_CLOSE}'
+    with pytest.raises(SpoilerTokenValidationError, match='nested spoiler blocks are not allowed'):
+        validate_spoiler_tokens(nested)
+
+
+def test_validate_spoiler_tokens_rejects_legacy_nested_in_pipe() -> None:
+    nested = f'||outer {SPOILER_OPEN}inner{SPOILER_CLOSE}||'
+    with pytest.raises(SpoilerTokenValidationError, match='nested spoiler blocks are not allowed'):
         validate_spoiler_tokens(nested)
 
 

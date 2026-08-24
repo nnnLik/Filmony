@@ -59,7 +59,7 @@ def validate_spoiler_tokens(body: str) -> str:
                 open_kind = None
                 i = last_copy
                 continue
-            if body.startswith(SPOILER_OPEN, i):
+            if body.startswith(SPOILER_OPEN, i) or body.startswith(PIPE_SPOILER_MARK, i):
                 raise SpoilerTokenValidationError('nested spoiler blocks are not allowed')
         elif open_kind == _KIND_PIPE:
             if body.startswith(PIPE_SPOILER_MARK, i):
@@ -73,6 +73,8 @@ def validate_spoiler_tokens(body: str) -> str:
                 open_kind = None
                 i = last_copy
                 continue
+            if body.startswith(SPOILER_OPEN, i) or body.startswith(SPOILER_CLOSE, i):
+                raise SpoilerTokenValidationError('nested spoiler blocks are not allowed')
 
         i += 1
 
