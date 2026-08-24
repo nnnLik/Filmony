@@ -43,7 +43,7 @@ export type EngagementCommentsRowProps<T extends ThreadComment> = {
   draftInputRef?: RefObject<HTMLInputElement | null>
   draftInlineCardRefs?: ReadonlyMap<number, { film_title: string; film_year: number | null }>
   onDraftKeyDown?: React.KeyboardEventHandler<HTMLInputElement>
-  onInsertReaction?: (reactionTypeId: number) => void
+  onInsertReaction?: (reactionTypeId: number, shortcode: string) => void
   onToggleSpoiler?: () => void
   onInsertMovieCard?: (row: WatchedInlinePickerItem) => void
   onSubmit: () => void

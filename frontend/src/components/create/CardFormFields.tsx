@@ -24,7 +24,7 @@ import {
   formatRating,
   normalizeRating,
 } from '../../lib/createCardBinding'
-import { insertSnippetAtCaret, reactionTokenFromId } from '../../lib/commentReactionTokens'
+import { insertSnippetAtCaret, reactionTokenForInsert } from '../../lib/commentReactionTokens'
 import { toggleSpoilerAtSelection } from '../../lib/spoilerTokens'
 import { useMicroFunLine } from '../../lib/microFun'
 import { usePepeExtremeRatingJudge } from '../../hooks/usePepeExtremeRatingJudge'
@@ -487,8 +487,8 @@ function CardWatchNoteContent({
   )
 
   const insertReactionIntoWatchNote = useCallback(
-    (id: number) => {
-      const token = reactionTokenFromId(id)
+    (id: number, shortcode: string) => {
+      const token = reactionTokenForInsert(id, shortcode)
       const el = watchNoteRef.current
       const inserted = insertSnippetAtCaret(
         watchNote,
@@ -546,7 +546,7 @@ function CardWatchNoteContent({
           }
         />
         <div className="flex shrink-0 flex-col justify-start gap-1 pt-1">
-          <CommentReactionTokenPicker disabled={disabled} onPickReactionTypeId={insertReactionIntoWatchNote} />
+          <CommentReactionTokenPicker disabled={disabled} onPickReactionType={insertReactionIntoWatchNote} />
           <CommentSpoilerToggleButton disabled={disabled} onToggleSpoiler={toggleSpoilerInWatchNote} />
         </div>
       </div>

@@ -23,7 +23,7 @@ import { CommentDraftMultiline } from '../comments/CommentDraftMirrorField'
 import { MovieCardInlinePickerButton } from '../comments/MovieCardInlinePickerButton'
 import { CommentReactionTokenPicker } from '../comments/CommentReactionTokenPicker'
 import { CommentSpoilerToggleButton } from '../comments/CommentSpoilerToggleButton'
-import { insertSnippetAtCaret, movieCardRefTokenFromId, reactionTokenFromId } from '../../lib/commentReactionTokens'
+import { insertSnippetAtCaret, movieCardRefTokenFromId, reactionTokenForInsert } from '../../lib/commentReactionTokens'
 import { toggleSpoilerAtSelection } from '../../lib/spoilerTokens'
 import {
   applyMentionPick,
@@ -195,9 +195,9 @@ export function FeedComposeSheet({
   )
 
   const insertReactionToken = useCallback(
-    (reactionTypeId: number) => {
+    (reactionTypeId: number, shortcode: string) => {
       setMentionPicker(null)
-      const token = reactionTokenFromId(reactionTypeId)
+      const token = reactionTokenForInsert(reactionTypeId, shortcode)
       const el = bodyRef.current
       const inserted = insertSnippetAtCaret(
         body,
@@ -527,7 +527,7 @@ export function FeedComposeSheet({
           <div className="flex items-center justify-end gap-2 text-[12px] text-(--tgui--hint_color)">
             <div className="flex shrink-0 items-center gap-1">
               <CommentReactionTokenPicker
-                onPickReactionTypeId={insertReactionToken}
+                onPickReactionType={insertReactionToken}
                 disabled={submitBusy || uploadBusy}
               />
               <CommentSpoilerToggleButton

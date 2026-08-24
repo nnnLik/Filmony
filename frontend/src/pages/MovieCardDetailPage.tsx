@@ -755,7 +755,7 @@ type MovieCardDetailLoadedBodyProps = {
   commentTextAreaRef: RefObject<HTMLTextAreaElement | null>
   commentMentionAnchorRef: RefObject<HTMLDivElement | null>
   commentMentionPopoverLayout: { top: number; left: number; width: number; maxHeight: number } | null
-  insertReactionIntoComment: (reactionTypeId: number) => void
+  insertReactionIntoComment: (reactionTypeId: number, shortcode: string) => void
   toggleSpoilerInComment: () => void
   insertMovieCardIntoComment: (row: WatchedInlinePickerItem) => void
   commentDraftInlineCardRefs: ReadonlyMap<number, { film_title: string; film_year: number | null }>

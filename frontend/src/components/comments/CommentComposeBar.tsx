@@ -42,7 +42,7 @@ export type CommentComposeBarProps = {
   onSelect?: () => void
   inputRef?: RefObject<HTMLInputElement | null>
   textareaRef?: RefObject<HTMLTextAreaElement | null>
-  onInsertReaction?: (reactionTypeId: number) => void
+  onInsertReaction?: (reactionTypeId: number, shortcode: string) => void
   onToggleSpoiler?: () => void
   onInsertMovieCard?: (row: WatchedInlinePickerItem) => void
   onMouseDown?: MouseEventHandler
@@ -125,7 +125,7 @@ export function CommentComposeBar({
           />
           {onInsertReaction != null ? (
             <CommentReactionTokenPicker
-              onPickReactionTypeId={onInsertReaction}
+              onPickReactionType={onInsertReaction}
               disabled={controlsDisabled}
               allowInsert={canInsert}
             />
@@ -251,7 +251,7 @@ export function CommentComposeBar({
         <div className="flex shrink-0 flex-col items-center justify-start gap-1 pt-1">
           {onInsertReaction != null ? (
             <CommentReactionTokenPicker
-              onPickReactionTypeId={onInsertReaction}
+              onPickReactionType={onInsertReaction}
               disabled={controlsDisabled}
               allowInsert={canInsert}
             />

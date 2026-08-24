@@ -15,7 +15,7 @@ import {
   COMMENT_BODY_MAX_LEN,
   insertSnippetAtCaret,
   movieCardRefTokenFromId,
-  reactionTokenFromId,
+  reactionTokenForInsert,
 } from '../lib/commentReactionTokens'
 import {
   applyMentionPick,
@@ -50,7 +50,7 @@ type UseCommentDraftEditorResult = {
   syncCommentMentionFromValue: (value: string, caretOverride?: number | null) => void
   pickCommentMention: (slug: string) => void
   dismissCommentMention: () => void
-  insertReactionIntoComment: (reactionTypeId: number) => void
+  insertReactionIntoComment: (reactionTypeId: number, shortcode: string) => void
   insertMovieCardIntoComment: (row: WatchedInlinePickerItem) => void
   toggleSpoilerInComment: () => void
   resetDraft: () => void
@@ -160,9 +160,9 @@ export function useCommentDraftEditor({
   )
 
   const insertReactionIntoComment = useCallback(
-    (reactionTypeId: number) => {
+    (reactionTypeId: number, shortcode: string) => {
       dismissCommentMention()
-      const token = reactionTokenFromId(reactionTypeId)
+      const token = reactionTokenForInsert(reactionTypeId, shortcode)
       const el = commentTextAreaRef.current
       const inserted = insertSnippetAtCaret(
         commentText,

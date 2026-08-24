@@ -19,7 +19,7 @@ import {
   COMMENT_BODY_MAX_LEN,
   insertSnippetAtCaret,
   movieCardRefTokenFromId,
-  reactionTokenFromId,
+  reactionTokenForInsert,
 } from '../../lib/commentReactionTokens'
 import { toggleSpoilerAtSelection } from '../../lib/spoilerTokens'
 import { hasMeaningfulCardRating } from '../../lib/ratingDisplay'
@@ -207,8 +207,8 @@ export function FeedCard({ card, viewerUserId = null, onCommentsState }: FeedCar
     return rows
   }, [card.card_author, card.comments_preview, panelComments])
 
-  const insertReactionToken = useCallback((reactionTypeId: number) => {
-    const token = reactionTokenFromId(reactionTypeId)
+  const insertReactionToken = useCallback((reactionTypeId: number, shortcode: string) => {
+    const token = reactionTokenForInsert(reactionTypeId, shortcode)
     const el = draftInputRef.current
     const inserted = insertSnippetAtCaret(
       draft,

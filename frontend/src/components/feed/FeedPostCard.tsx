@@ -23,7 +23,7 @@ import {
   COMMENT_BODY_MAX_LEN,
   insertSnippetAtCaret,
   movieCardRefTokenFromId,
-  reactionTokenFromId,
+  reactionTokenForInsert,
 } from '../../lib/commentReactionTokens'
 import { toggleSpoilerAtSelection } from '../../lib/spoilerTokens'
 import { inlineMovieCardRefMapFromSnippets, type InlineMovieCardRefMeta } from '../../lib/inlineMovieCardRefMap'
@@ -393,8 +393,8 @@ export function FeedPostCard({
   }, [draft, mergedPreviewAfterCreate, post.id])
 
   const insertReactionToken = useCallback(
-    (reactionTypeId: number) => {
-      const token = reactionTokenFromId(reactionTypeId)
+    (reactionTypeId: number, shortcode: string) => {
+      const token = reactionTokenForInsert(reactionTypeId, shortcode)
       const el = draftInputRef.current
       const inserted = insertSnippetAtCaret(
         draft,

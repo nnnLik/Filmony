@@ -17,4 +17,11 @@
 - Created this `progress.md`.
 - Added `colon-shortcode-markup` as `in_progress` #1 in `.cursor/HOT.md`; existing in_progress items kept; `recent_completed` unchanged.
 
-Implementation remaining: watch-note validators, frontend parsers/overlay/autocomplete, spoiler `||` already in working tree, closeout docs/PR.
+## 2026-08-24 — picker/compose insert `:shortcode:`
+
+- Threaded catalog `shortcode` through `ReactionCatalogItem` and picker `apply(id, shortcode)`.
+- `CommentReactionTokenPicker` public prop is `onPickReactionType(id, shortcode)`; recents still record id.
+- Insert helpers (comment draft, watch note, feed compose, feed cards) call `reactionTokenForInsert(id, shortcode)`.
+- Parents: `CommentComposeBar`, `CommentThreadSection`, `EngagementCommentsRow`, `MovieCardDetailPage`.
+
+Implementation remaining: colon autocomplete, closeout docs/PR.

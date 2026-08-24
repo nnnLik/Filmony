@@ -35,7 +35,7 @@ export type CommentThreadSectionProps<T extends ThreadComment> = {
   onCommentSelect: () => void
   commentTextAreaRef: RefObject<HTMLTextAreaElement | null>
   commentDraftInlineCardRefs: ReadonlyMap<number, { film_title: string; film_year: number | null }>
-  insertReactionIntoComment: (reactionTypeId: number) => void
+  insertReactionIntoComment: (reactionTypeId: number, shortcode: string) => void
   toggleSpoilerInComment: () => void
   insertMovieCardIntoComment: (row: WatchedInlinePickerItem) => void
   charsLeft: number
