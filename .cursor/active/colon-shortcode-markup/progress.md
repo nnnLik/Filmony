@@ -34,4 +34,13 @@
 
 Verification: `cd frontend && npm test` (156 passed, including parse + expand); `npm run lint` (no new issues); `npx tsc -b` passed. `vite build` failed in this environment (`registerHooks` / Cloudflare plugin), not due to these files.
 
-Implementation remaining: feed compose / watch notes autocomplete (next task), closeout docs/PR.
+## 2026-08-24 — feed compose / watch note / feed drafts autocomplete
+
+- Wired `useReactionShortcodePicker` + `ReactionShortcodeSuggestPortal` into `FeedComposeSheet` (no `COMMENT_BODY_MAX_LEN`; mention wins keydown if open).
+- Watch note in `CardFormFields` gets the same picker; legacy `⟦r` / `[[r` expand once when catalog loads (skip-self-write ref so typing is not overwritten).
+- Feed inline comment drafts (`FeedCard`, `FeedPostCard`) use `COMMENT_BODY_MAX_LEN`; `EngagementCommentsRow` forwards shortcode portal props.
+- `FeedPostCard` body edit expands legacy tokens on enter (same as `CommentListItem`) and hosts a shortcode picker on the edit field.
+
+Verification: `npx eslint --max-warnings=0` on touched files passed; `npx tsc -b` passed.
+
+Implementation remaining: closeout docs/PR.

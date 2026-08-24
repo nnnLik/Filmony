@@ -20,7 +20,11 @@ import { loadReactionCatalog } from '../lib/reactionCatalogCache'
 import { applyMentionPick } from '../lib/feedMentionCompose'
 import { useMentionPopoverLayout } from '../lib/useMentionPopoverLayout'
 
-type CaretField = Pick<HTMLTextAreaElement, 'selectionStart' | 'focus' | 'setSelectionRange'>
+type CaretField = {
+  selectionStart: number | null
+  focus: () => void
+  setSelectionRange: HTMLTextAreaElement['setSelectionRange']
+}
 
 export type UseReactionShortcodePickerArgs = {
   enabled?: boolean
