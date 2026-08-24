@@ -1814,8 +1814,7 @@ async def test_comment_reaction_embedded_tokens(async_client: AsyncClient) -> No
     )
     assert many_tokens.status_code == 200
     assert many_tokens.json()['text'] == (
-        ':comment-embed-707-a::comment-embed-707-b:'
-        ':comment-embed-707-c::comment-embed-707-d: много'
+        ':comment-embed-707-a::comment-embed-707-b::comment-embed-707-c::comment-embed-707-d: много'
     )
 
 

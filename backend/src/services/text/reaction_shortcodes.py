@@ -62,7 +62,7 @@ def rewrite_reaction_tokens(
     pieces: list[str] = []
     last = 0
     for match in _TOKEN_SCAN_RE.finditer(body):
-        pieces.append(body[last:match.start()])
+        pieces.append(body[last : match.start()])
         pieces.append(
             _rewrite_one_match(
                 match,
