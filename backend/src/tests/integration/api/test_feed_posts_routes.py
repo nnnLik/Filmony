@@ -966,7 +966,8 @@ async def test_feed_post_body_canonicalizes_legacy_reaction_tokens(
     assert unknown_shortcode.json()['body'] == 'hello :foo: there'
 
     bad = await async_client.post('/api/feed-posts', json={'body': '⟦r999999999⟧ нет'})
-    assert bad.status_code == 422
+    assert bad.status_code == 400
+    assert 'unknown reaction type' in str(bad.json()['detail']).lower()
 
 
 @pytest.mark.asyncio
