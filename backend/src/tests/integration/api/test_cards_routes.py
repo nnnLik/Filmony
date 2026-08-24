@@ -45,6 +45,7 @@ async def _insert_reaction_type(*, asset_key: str) -> int:
         rt = ReactionType(
             category_slug='smiles',
             asset_key=asset_key,
+            shortcode=asset_key.replace('/', '-')[:32],
             image_url='https://example.com/reaction.png',
         )
         session.add(rt)
@@ -1730,7 +1731,14 @@ async def test_comment_reaction_embedded_tokens(async_client: AsyncClient) -> No
         json={'text': f'вау ⟦r{rx1}⟧ класс'},
     )
     assert ok.status_code == 200
-    assert ok.json()['text'] == f'вау ⟦r{rx1}⟧ класс'
+    assert ok.json()['text'] == 'вау :comment-embed-707-a: класс'
+
+    unknown_shortcode = await async_client.post(
+        f'/api/cards/{card_id}/comments',
+        json={'text': 'hello :foo: there'},
+    )
+    assert unknown_shortcode.status_code == 200
+    assert unknown_shortcode.json()['text'] == 'hello :foo: there'
 
     bad = await async_client.post(
         f'/api/cards/{card_id}/comments',
@@ -1746,6 +1754,10 @@ async def test_comment_reaction_embedded_tokens(async_client: AsyncClient) -> No
         json={'text': f'⟦r{rx1}⟧⟦r{rx2}⟧⟦r{rx3}⟧⟦r{rx4}⟧ много'},
     )
     assert many_tokens.status_code == 200
+    assert many_tokens.json()['text'] == (
+        ':comment-embed-707-a::comment-embed-707-b:'
+        ':comment-embed-707-c::comment-embed-707-d: много'
+    )
 
 
 @pytest.mark.asyncio
