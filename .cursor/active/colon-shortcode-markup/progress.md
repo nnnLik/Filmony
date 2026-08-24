@@ -7,7 +7,8 @@
 - Exposed `shortcode` on `ReactionCatalogItem` / `ReactionCatalogItemResponse` and copied it in the catalog mapper.
 - Comment and feed-post validators load id→shortcode maps when the body has `:`, `⟦r`, or `[[r`, then `rewrite_reaction_tokens`; unknown legacy ids still error; unknown `:foo:` stays literal.
 - Re-check max length after rewrite; card-ref / mention / spoiler validation still runs after canonicalize.
-- Tests: unit validators + catalog/comment/feed-post integration stubs for `shortcode` and rewrite.
+- Tests: unit validators + catalog row/schema; catalog/comment/feed-post integration stubs for `shortcode` and rewrite.
+- Verification (host venv, Docker unavailable): ruff check/format on touched files passed; `pytest -n0 --no-cov` for comment/feed-post validator + shortcode helper units: 25 passed. Integration HTTP tests not run (no Postgres).
 
 ## 2026-08-24 — artifacts created
 
